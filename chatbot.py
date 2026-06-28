@@ -1,6 +1,18 @@
 import pandas as pd
 import string
 import re
+import nltk
+
+# Download required NLTK data
+try:
+    nltk.data.find("corpora/stopwords")
+except LookupError:
+    nltk.download("stopwords")
+
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -43,11 +55,8 @@ def normalize(text):
 
 # Clean text
 def preprocess(text):
-
     text = normalize(text)
-
     text = text.lower()
-
     text = text.translate(str.maketrans("", "", string.punctuation))
 
     words = word_tokenize(text)
@@ -65,15 +74,12 @@ clean_questions = [preprocess(q) for q in questions]
 
 # TF-IDF
 vectorizer = TfidfVectorizer()
-
 question_vectors = vectorizer.fit_transform(clean_questions)
 
 
 def get_answer(user_question):
-
     original_question = user_question.lower()
 
-    # Reject unrelated topics immediately
     keywords = [
         "ai",
         "artificial intelligence",
@@ -98,7 +104,6 @@ def get_answer(user_question):
     similarity = cosine_similarity(user_vector, question_vectors)
 
     index = similarity.argmax()
-
     score = similarity[0][index]
 
     if score >= 0.60:
