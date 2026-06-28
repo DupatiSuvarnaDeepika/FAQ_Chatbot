@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI FAQ Chatbot</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🤖 AI FAQ Chatbot</h1>
+
+    <p class="subtitle">
+        Ask me anything about Artificial Intelligence.
+    </p>
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="question"
+            placeholder="Type your question..."
+            required
+        >
+
+        <button type="submit">
+            Send 🚀
+        </button>
+
+    </form>
+
+    <br>
+
+    <form action="/clear" method="POST">
+        <button type="submit">🧹 Clear Chat</button>
+    </form>
+
+    <br>
+
+    {% for chat in chat_history %}
+
+    <div class="chat user">
+        <strong>👤 You:</strong><br>
+        {{ chat.question }}
+    </div>
+
+    <div class="chat bot">
+        <strong>🤖 Bot:</strong><br>
+        {{ chat.answer }}
+    </div>
+
+    {% endfor %}
+
+    <footer class="footer">
+        <p>Developed by <strong>Suvarna Deepika</strong></p>
+        <p>© 2026 AI FAQ Chatbot</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
