@@ -8,20 +8,22 @@ import nltk
 nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
 os.makedirs(nltk_data_dir, exist_ok=True)
 
-# Tell NLTK where to look
+# Add local folder to NLTK search path
 if nltk_data_dir not in nltk.data.path:
     nltk.data.path.append(nltk_data_dir)
 
-# Download required datasets if missing
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords", download_dir=nltk_data_dir)
+# Download required NLTK resources
+resources = [
+    ("corpora/stopwords", "stopwords"),
+    ("tokenizers/punkt", "punkt"),
+    ("tokenizers/punkt_tab", "punkt_tab")
+]
 
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt", download_dir=nltk_data_dir)
+for resource_path, resource_name in resources:
+    try:
+        nltk.data.find(resource_path)
+    except LookupError:
+        nltk.download(resource_name, download_dir=nltk_data_dir)
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -81,14 +83,12 @@ def preprocess(text):
 # Preprocess FAQ questions
 clean_questions = [preprocess(q) for q in questions]
 
-# TF-IDF
+# TF-IDF Vectorizer
 vectorizer = TfidfVectorizer()
-
 question_vectors = vectorizer.fit_transform(clean_questions)
 
 
 def get_answer(user_question):
-
     original_question = user_question.lower()
 
     keywords = [
@@ -115,7 +115,6 @@ def get_answer(user_question):
     similarity = cosine_similarity(user_vector, question_vectors)
 
     index = similarity.argmax()
-
     score = similarity[0][index]
 
     if score >= 0.60:
